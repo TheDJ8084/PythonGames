@@ -8,27 +8,29 @@ def clear():
         os.system('clear')
 def game_menu():
     print("Singleplayer Games")
-    print("1. Hangman")
+    print("1. Maze Game")
     print("2. Guess the Number")
     print("3. Simon Says")
     print("4. Word Guess")
-    print("5. Main Menu")
+    print("5. Snake")
+    print("6. Blackjack")
+    print("7. Main Menu")
     print()
 
     choice = input("Enter the number corresponding to your choice: ")
 
     if choice == "1":
-        print("Starting Hangman...")
+        print("Starting Maze Game...")
         time.sleep(3)
         clear()
-        import Tictactoe
+        import Mazegame
         # Call the function to start the Tic Tac Toe game
         # tic_tac_toe()
     elif choice == "2":
         print("Starting Guess the Number...")
         time.sleep(3)
         clear()
-        import Hangman
+        import Guessthenumber
         # Call the function to start the Hangman game
         # hangman()
     elif choice == "3":
@@ -42,6 +44,16 @@ def game_menu():
         clear()
         import Wordguess
     elif choice == "5":
+        print("Starting Snake...")
+        time.sleep(3)
+        clear()
+        import Snake
+    elif choice == "6":
+        print("Starting Blackjack...")
+        time.sleep(3)
+        clear()
+        import Snake
+    elif choice == "7":
         print("Going back to the main menu...")
         time.sleep(3)
         clear()

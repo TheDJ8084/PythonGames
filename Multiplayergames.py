@@ -9,7 +9,8 @@ def clear():
 def game_menu():
     print("Multiplayer Games")
     print("1. Tic Tac Toe")
-    print("2. Main Menu")
+    print("2. Pong")
+    print("3. Main Menu")
     print()
 
     choice = input("Enter the number corresponding to your choice: ")
@@ -22,6 +23,11 @@ def game_menu():
         # Call the function to start the Tic Tac Toe game
         # tic_tac_toe()
     elif choice == "2":
+        print("Starting Pong...")
+        time.sleep(3)
+        clear()
+        import Pong
+    elif choice == "3":
         print("Going back to the main menu...")
         time.sleep(3)
         clear()
