@@ -19,6 +19,9 @@ Currently Available Games:
   Multiplayer
   - Tic Tac Toe
   - Pong
+	- 
+Dependencies
+- Pygame
 
 Usage:
 1. Extract the Downloaded ZIP file
