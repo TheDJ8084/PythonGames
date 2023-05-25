@@ -3,7 +3,6 @@ A Collection of Python based Games
 
 Supported Operating Systems:
 - Windows
-- MacOS
 
 Currently Available Games:
   
