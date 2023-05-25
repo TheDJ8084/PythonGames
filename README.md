@@ -3,9 +3,6 @@ A Collection of Python based Games
 
 Supported Operating Systems:
 - Windows
-- Linux
-- Chromeos (using Linux development environment)
-- Chromeos Flex (using Linux development environment)
 - MacOS
 
 Currently Available Games:
