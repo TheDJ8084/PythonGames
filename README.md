@@ -9,6 +9,7 @@ Supported Operating Systems:
 - MacOS
 
 Currently Available Games:
+  
   Singleplayer
   - Maze Game
   - Guess the Number
@@ -16,10 +17,11 @@ Currently Available Games:
   - Word Guess
   - Snake
   - Blackjack
+  
   Multiplayer
   - Tic Tac Toe
   - Pong
-	- 
+
 Dependencies
 - Pygame
 
