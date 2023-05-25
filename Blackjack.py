@@ -1,106 +1,86 @@
+import pygame
 import random
+import subprocess
+import sys
 
-# Card ranks, suits, and values
-ranks = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"]
-suits = ["♠", "♣", "♦", "♥"]
-values = {"2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8, "9": 9, "10": 10, "J": 10, "Q": 10, "K": 10, "A": 11}
+# Initialize Pygame
+pygame.init()
 
-# Card class
-class Card:
-    def __init__(self, rank, suit):
-        self.rank = rank
-        self.suit = suit
-        self.value = values[rank]
+# Set up the display
+WIDTH, HEIGHT = 800, 600
+WINDOW_SIZE = (WIDTH, HEIGHT)
+screen = pygame.display.set_mode(WINDOW_SIZE)
+pygame.display.set_caption("Blackjack")
 
-    def __str__(self):
-        return f"{self.rank}{self.suit}"
+# Colors
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
 
-# Deck class
-class Deck:
-    def __init__(self):
-        self.deck = []
-        for suit in suits:
-            for rank in ranks:
-                self.deck.append(Card(rank, suit))
-    
-    def shuffle(self):
-        random.shuffle(self.deck)
-    
-    def deal_card(self):
-        return self.deck.pop()
+# Game variables
+deck = [
+    2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11,
+    2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11,
+    2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11,
+    2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11
+]
+random.shuffle(deck)
 
-# Hand class
-class Hand:
-    def __init__(self):
-        self.cards = []
-        self.value = 0
-        self.aces = 0
-    
-    def add_card(self, card):
-        self.cards.append(card)
-        self.value += card.value
-        if card.rank == "A":
-            self.aces += 1
-    
-    def adjust_for_ace(self):
-        while self.value > 21 and self.aces:
-            self.value -= 10
-            self.aces -= 1
+player_cards = []
+dealer_cards = []
 
-# Game logic
-def blackjack_game():
-    deck = Deck()
-    deck.shuffle()
+def open_new_file():
+    subprocess.Popen([sys.executable, 'Singleplayergames.py'])
+    pygame.quit()
+    sys.exit()
 
-    player_hand = Hand()
-    dealer_hand = Hand()
+# Game loop
+running = True
+while running:
+    # Event handling
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
 
-    player_hand.add_card(deck.deal_card())
-    player_hand.add_card(deck.deal_card())
-    dealer_hand.add_card(deck.deal_card())
-    dealer_hand.add_card(deck.deal_card())
+    # Game logic
+    if len(player_cards) == 0 and len(dealer_cards) == 0:
+        # Deal initial cards
+        for _ in range(2):
+            player_cards.append(deck.pop())
+            dealer_cards.append(deck.pop())
 
-    def display_table(show_all=False):
-        print("\nDealer's Hand:")
-        if show_all:
-            for card in dealer_hand.cards:
-                print(card, end=" ")
-            print(f"\nValue: {dealer_hand.value}")
-        else:
-            print(dealer_hand.cards[0], " **hidden card**")
+        # Check if player or dealer has blackjack
+        player_sum = sum(player_cards)
+        dealer_sum = sum(dealer_cards)
 
-        print("\nPlayer's Hand:")
-        for card in player_hand.cards:
-            print(card, end=" ")
-        print(f"\nValue: {player_hand.value}")
+        if player_sum == 21 or dealer_sum == 21:
+            # Game over
+            open_new_file()
 
-    def player_hit_or_stand():
-        while True:
-            choice = input("\nDo you want to Hit or Stand? Enter 'h' or 's': ").lower()
-            if choice == "h":
-                player_hand.add_card(deck.deal_card())
-                player_hand.adjust_for_ace()
-                display_table()
-                if player_hand.value > 21:
-                    print("Player busts! Dealer wins.")
-                    return False
-            elif choice == "s":
-                return True
-            else:
-                print("Invalid input. Please enter 'h' or 's'.")
+    # Drawing
+    screen.fill(WHITE)
 
-    # Game loop
-    while True:
-        display_table()
+    # Draw player's cards
+    player_text = pygame.font.Font(None, 36).render("Player Cards:", True, BLACK)
+    screen.blit(player_text, (10, 10))
 
-        if player_hand.value == 21:
-            print("Player wins with Blackjack!")
-            return True
+    x_pos = 10
+    for card in player_cards:
+        card_text = pygame.font.Font(None, 36).render(str(card), True, BLACK)
+        screen.blit(card_text, (x_pos, 50))
+        x_pos += 40
 
-        if player_hit_or_stand():
-            while dealer_hand.value < 17:
-                dealer_hand.add_card(deck.deal_card())
-                dealer_hand.adjust_for_ace()
-                display_table(show_all=True)
+    # Draw dealer's cards
+    dealer_text = pygame.font.Font(None, 36).render("Dealer Cards:", True, BLACK)
+    screen.blit(dealer_text, (10, 150))
 
-                if dealer_hand.value > 
+    x_pos = 10
+    for card in dealer_cards:
+        card_text = pygame.font.Font(None, 36).render(str(card), True, BLACK)
+        screen.blit(card_text, (x_pos, 190))
+        x_pos += 40
+
+    pygame.display.flip()
+
+# Quit Pygame
+pygame.quit()
+sys.exit()

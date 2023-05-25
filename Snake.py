@@ -1,133 +1,118 @@
-import turtle
-import time
+import pygame
 import random
+import os
 
-delay = 0.1
-score = 0
-high_score = 0
+# Initialize Pygame and set up the window
+pygame.init()
+screen_width, screen_height = 640, 480
+screen = pygame.display.set_mode((screen_width, screen_height))
+pygame.display.set_caption("Snake Game")
 
-# Set up the screen
-wn = turtle.Screen()
-wn.title("Snake Game")
-wn.bgcolor("black")
-wn.setup(width=600, height=600)
-wn.tracer(0)  # Turns off the screen updates
+# Define colors
+BLACK = (0, 0, 0)
+GREEN = (0, 255, 0)
+RED = (255, 0, 0)
 
-# Snake head
-head = turtle.Turtle()
-head.speed(0)
-head.shape("square")
-head.color("white")
-head.penup()
-head.goto(0, 0)
-head.direction = "Stop"
+# Define the snake and food sizes
+snake_size = 20
+food_size = 20
 
-# Snake food
-food = turtle.Turtle()
-food.speed(0)
-food.shape("circle")
-food.color("red")
-food.penup()
-food.goto(0, 100)
+# Define the snake's movement speed
+snake_speed = 10
 
-pen = turtle.Turtle()
-pen.speed(0)
-pen.shape("square")
-pen.color("white")
-pen.penup()
-pen.hideturtle()
-pen.goto(0, 260)
-pen.write("Score: 0  High Score: 0", align="center",
-          font=("Courier", 24, "normal"))
+clock = pygame.time.Clock()
 
-segments = []
 
-# Functions
-def go_up():
-    if head.direction != "down":
-        head.direction = "up"
+def game_over():
+    # Code to execute when the game is over
+    # For example, you can call another Python file here
+    os.system("Singleplayergames.py")
+    pygame.quit()
 
-def go_down():
-    if head.direction != "up":
-        head.direction = "down"
 
-def go_left():
-    if head.direction != "right":
-        head.direction = "left"
+def draw_snake(snake_body):
+    for block in snake_body:
+        pygame.draw.rect(screen, GREEN, [block[0], block[1], snake_size, snake_size])
 
-def go_right():
-    if head.direction != "left":
-        head.direction = "right"
 
-def move():
-    if head.direction == "up":
-        y = head.ycor()
-        head.sety(y + 20)
+def draw_food(food_position):
+    pygame.draw.rect(screen, RED, [food_position[0], food_position[1], food_size, food_size])
 
-    if head.direction == "down":
-        y = head.ycor()
-        head.sety(y - 20)
 
-    if head.direction == "left":
-        x = head.xcor()
-        head.setx(x - 20)
+def run_game():
+    # Set up initial snake and food positions
+    snake_body = [[screen_width / 2, screen_height / 2]]
+    food_position = [random.randint(1, (screen_width - food_size) // food_size) * food_size,
+                     random.randint(1, (screen_height - food_size) // food_size) * food_size]
 
-    if head.direction == "right":
-        x = head.xcor()
-        head.setx(x + 20)
+    # Set up initial movement direction
+    direction = "RIGHT"
 
-def check_collision():
-    if head.xcor() > 290 or head.xcor() < -290 or head.ycor() > 290 or head.ycor() < -290:
-        return True
+    game_over_flag = False
 
-    for segment in segments[1:]:
-        if segment.distance(head) < 20:
-            return True
+    while not game_over_flag:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                game_over()
 
-    return False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP and direction != "DOWN":
+                    direction = "UP"
+                elif event.key == pygame.K_DOWN and direction != "UP":
+                    direction = "DOWN"
+                elif event.key == pygame.K_LEFT and direction != "RIGHT":
+                    direction = "LEFT"
+                elif event.key == pygame.K_RIGHT and direction != "LEFT":
+                    direction = "RIGHT"
 
-def generate_food():
-    x = random.randint(-290, 290)
-    y = random.randint(-290, 290)
-    food.goto(x, y)
+        # Update snake position based on the direction
+        if direction == "UP":
+            snake_body[0][1] -= snake_speed
+        elif direction == "DOWN":
+            snake_body[0][1] += snake_speed
+        elif direction == "LEFT":
+            snake_body[0][0] -= snake_speed
+        elif direction == "RIGHT":
+            snake_body[0][0] += snake_speed
 
-def update_score():
-    pen.clear()
-    pen.write(f"Score: {score}  High Score: {high_score}", align="center", font=("Courier", 24, "normal"))
+        # Check if the snake has hit the boundaries
+        if snake_body[0][0] >= screen_width or snake_body[0][0] < 0 or snake_body[0][1] >= screen_height or snake_body[0][1] < 0:
+            game_over_flag = True
 
-# Keyboard bindings
-wn.listen()
-wn.onkeypress(go_up, "w")
-wn.onkeypress(go_down, "s")
-wn.onkeypress(go_left, "a")
-wn.onkeypress(go_right, "d")
+        # Check if the snake has hit itself
+        for block in snake_body[1:]:
+            if snake_body[0][0] == block[0] and snake_body[0][1] == block[1]:
+                game_over_flag = True
 
-# Main game loop
-while True:
-    wn.update()
+        # Check if the snake has eaten the food
+        if snake_body[0][0] == food_position[0] and snake_body[0][1] == food_position[1]:
+            # Generate new food position
+            food_position = [random.randint(1, (screen_width - food_size) // food_size) * food_size,
+                             random.randint(1, (screen_height - food_size) // food_size) * food_size]
 
-    # Check for collision with border or self
-    if check_collision():
-        time.sleep(1)
-        head.goto(0, 0)
-        head.direction = "Stop"
+            # Extend the length of the snake
+            new_block = list(snake_body[-1])
+            if direction == "UP":
+                new_block[1] += snake_size
+            elif direction == "DOWN":
+                new_block[1] -= snake_size
+            elif direction == "LEFT":
+                new_block[0] += snake_size
+            elif direction == "RIGHT":
+                new_block[0] -= snake_size
 
-        for segment in segments:
-            segment.goto(1000, 1000)
-        
-        segments.clear()
+            snake_body.append(new_block)
 
-        score = 0
-        delay = 0.1
+        # Update the game screen
+        screen.fill(BLACK)
+        draw_snake(snake_body)
+        draw_food(food_position)
+        pygame.display.update()
 
-        update_score()
+        # Set the game frame rate
+        clock.tick(30)
 
-    # Check for collision with food
-    if head.distance(food) < 20:
-        x = random.randint(-270, 270)
-        y = random.randint(-270, 270)
+    game_over()
 
-        # Add a new segment to the snake
-        new_segment = turtle.Turtle()
-        new_segment.speed(0)
-        new_segment
+
+run_game()
