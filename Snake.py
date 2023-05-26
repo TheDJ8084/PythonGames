@@ -23,10 +23,11 @@ snake_speed = 10
 clock = pygame.time.Clock()
 
 
-def game_over():
+def game_over(score):
     # Code to execute when the game is over
     # For example, you can call another Python file here
-    os.system("Singleplayergames.py")
+    print("Game Over")
+    print("Score:", score)
     pygame.quit()
 
 
@@ -49,11 +50,12 @@ def run_game():
     direction = "RIGHT"
 
     game_over_flag = False
+    score = 0
 
     while not game_over_flag:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                game_over()
+                game_over(score)
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP and direction != "DOWN":
@@ -67,16 +69,19 @@ def run_game():
 
         # Update snake position based on the direction
         if direction == "UP":
-            snake_body[0][1] -= snake_speed
+            new_block = [snake_body[0][0], snake_body[0][1] - snake_speed]
         elif direction == "DOWN":
-            snake_body[0][1] += snake_speed
+            new_block = [snake_body[0][0], snake_body[0][1] + snake_speed]
         elif direction == "LEFT":
-            snake_body[0][0] -= snake_speed
+            new_block = [snake_body[0][0] - snake_speed, snake_body[0][1]]
         elif direction == "RIGHT":
-            snake_body[0][0] += snake_speed
+            new_block = [snake_body[0][0] + snake_speed, snake_body[0][1]]
+
+        snake_body.insert(0, new_block)
 
         # Check if the snake has hit the boundaries
-        if snake_body[0][0] >= screen_width or snake_body[0][0] < 0 or snake_body[0][1] >= screen_height or snake_body[0][1] < 0:
+        if (snake_body[0][0] >= screen_width or snake_body[0][0] < 0 or
+                snake_body[0][1] >= screen_height or snake_body[0][1] < 0):
             game_over_flag = True
 
         # Check if the snake has hit itself
@@ -91,28 +96,28 @@ def run_game():
                              random.randint(1, (screen_height - food_size) // food_size) * food_size]
 
             # Extend the length of the snake
-            new_block = list(snake_body[-1])
-            if direction == "UP":
-                new_block[1] += snake_size
-            elif direction == "DOWN":
-                new_block[1] -= snake_size
-            elif direction == "LEFT":
-                new_block[0] += snake_size
-            elif direction == "RIGHT":
-                new_block[0] -= snake_size
+            score += 1
 
-            snake_body.append(new_block)
+        else:
+            # Remove the last block of the snake if no food was eaten
+            snake_body.pop()
 
         # Update the game screen
         screen.fill(BLACK)
         draw_snake(snake_body)
         draw_food(food_position)
+
+        # Draw score indicator
+        font = pygame.font.Font(None, 36)
+        score_text = font.render("Score: " + str(score), True, GREEN)
+        screen.blit(score_text, (10, 10))
+
         pygame.display.update()
 
         # Set the game frame rate
-        clock.tick(30)
+        clock.tick(12)
 
-    game_over()
+    game_over(score)
 
 
 run_game()
