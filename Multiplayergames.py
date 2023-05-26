@@ -64,7 +64,7 @@ button_y = 200
 button_spacing = 100
 
 button1 = Button("Tic Tac Toe", button1_x, button_y, button_width, button_height, button_clicked1)
-button2 = Button("Pong", button2_x, button_y + button_spacing, button_width, button_height, button_clicked2)
+button2 = Button("PongMP", button2_x, button_y + button_spacing, button_width, button_height, button_clicked2)
 button3 = Button("Back to Main Menu", button3_x, button_y + 2 * button_spacing, button_width, button_height,
                  button_clicked3)
 

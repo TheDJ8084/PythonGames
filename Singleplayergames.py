@@ -11,7 +11,6 @@ pygame.display.set_caption("Singleplayer Games")
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
-
 # Flag to indicate if the game should be ended
 end_game = False
 
@@ -19,7 +18,6 @@ end_game = False
 def execute_file(file_name):
     global end_game
     end_game = True
-    pygame.quit()
     os.system("python " + file_name)
 
 
@@ -48,6 +46,10 @@ def button_clicked6():
 
 
 def button_clicked7():
+    execute_file("Pong.py")
+
+
+def button_clicked8():
     execute_file("Mainmenu.py")
 
 
@@ -71,22 +73,27 @@ class Button:
 
 # Calculate the x-coordinate for the centered buttons
 button_width = 200
-button_x = (screen.get_width() - button_width) // 2
+button_height = 75
+button_x = (screen.get_width() - button_width * 2 - 50) // 2
 
-button1 = Button("Maze Game", button_x, 150, button_width, 50, button_clicked1)
-button2 = Button("Guess the Number", button_x, 250, button_width, 50, button_clicked2)
-button3 = Button("Simon Says", button_x, 350, button_width, 50, button_clicked3)
-button4 = Button("Word Guess", button_x, 450, button_width, 50, button_clicked4)
-button5 = Button("Snake", button_x, 550, button_width, 50, button_clicked5)
-button6 = Button("Blackjack", button_x, 650, button_width, 50, button_clicked6)
-button7 = Button("Back to Main Menu", button_x, 750, button_width, 50, button_clicked7)
+button_row1_y = 150
+button_row2_y = button_row1_y + button_height + 50  # Adjust this value to set the vertical gap between the rows
+
+button1 = Button("Maze Game", button_x, button_row1_y, button_width, button_height, button_clicked1)
+button2 = Button("Guess the Number", button_x + button_width + 50, button_row1_y, button_width, button_height, button_clicked2)
+button3 = Button("Simon Says", button_x, button_row2_y, button_width, button_height, button_clicked3)
+button4 = Button("Word Guess", button_x + button_width + 50, button_row2_y, button_width, button_height, button_clicked4)
+button5 = Button("Snake", button_x, button_row2_y + button_height + 50, button_width, button_height, button_clicked5)
+button6 = Button("Blackjack", button_x + button_width + 50, button_row2_y + button_height + 50, button_width, button_height, button_clicked6)
+button7 = Button("Pong", button_x, button_row2_y + 2 * (button_height + 50), button_width, button_height, button_clicked7)
+button8 = Button("Back to Main Menu", button_x + button_width + 50, button_row2_y + 2 * (button_height + 50), button_width, button_height, button_clicked8)
 
 title_font = pygame.font.Font(None, 40)
 title_text = title_font.render("Singleplayer Games", True, WHITE)
 title_text_rect = title_text.get_rect(center=(screen.get_width() // 2, 100))
 
-
 running = True
+
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -102,6 +109,7 @@ while running:
                 button5.clicked()
                 button6.clicked()
                 button7.clicked()
+                button8.clicked()
 
     screen.fill(BLACK)
     screen.blit(title_text, title_text_rect)
@@ -112,6 +120,7 @@ while running:
     button5.draw()
     button6.draw()
     button7.draw()
+    button8.draw()
     pygame.display.flip()
 
     if end_game:
